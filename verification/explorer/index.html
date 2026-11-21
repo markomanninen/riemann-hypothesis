@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proof spine explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&display=swap" rel="stylesheet">
+<style>
+/* VOICE  clinical, exact, quiet, like a reference plate in a mathematics atlas
+   IDEA   a scientific plate of an anatomy, where the proof is the specimen and each module a labelled part
+   PICTURE a proportion strip of the current module's branches, each segment sized by the lines below it
+   COLOUR and TYPE  white ground, ink #10131a, carmine #c1121f for flags, prussian #0b4f8a for structure, Literata
+   LAYOUT one column up to 1100px, plate on top, the branch list below, the import lists folded */
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0f1217);--ink:light-dark(#10131a,#e7e9ee);--mute:light-dark(#5a6170,#9aa1b0);
+--rule:light-dark(#dfe3ea,#262b35);--pr:light-dark(#0b4f8a,#7fb2e5);--prs:light-dark(#e6eef7,#16253a);--car:light-dark(#c1121f,#ff6b6b);--panel:light-dark(#f6f8fb,#151a22)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Literata,Georgia,serif;overflow-x:clip}
+.band{padding:clamp(20px,4vw,48px) max(4vw,16px);max-width:1100px;margin:0 auto}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.05;margin:0 0 10px;font-weight:600;text-wrap:balance}
+h2{font-size:20px;margin:28px 0 8px;font-weight:600}
+p{margin:0 0 10px;max-width:70ch}.mute{color:var(--mute)}.small{font-size:13px}
+a{color:var(--pr)}
+code,.mono{font-family:ui-monospace,Menlo,monospace;font-size:13px;overflow-wrap:anywhere}
+button,input{font:inherit;color:inherit}
+.btn{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rule);background:var(--bg);border-radius:8px;cursor:pointer}
+.btn:focus-visible,input:focus-visible,.row:focus-visible,.seg:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
+.btn[aria-disabled=true]{opacity:.45;cursor:default}
+input[type=search]{width:100%;min-height:44px;padding:0 12px;font-size:16px;border:1px solid var(--rule);border-radius:8px;background:var(--panel)}
+.hs{position:relative;display:flex;align-items:center;gap:4px;margin:12px 0}
+.hs .track{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;scroll-behavior:smooth}
+.hs .track::-webkit-scrollbar{display:none}
+.hs .track button{flex:none;min-height:44px;padding:0 12px;border:1px solid var(--rule);border-radius:22px;background:var(--panel);cursor:pointer;white-space:nowrap;font-size:14px}
+.hs .track button[aria-current=true]{background:var(--pr);color:var(--bg);border-color:var(--pr)}
+.hs .arr{flex:none;width:44px;height:44px;border:0;background:var(--bg);cursor:pointer;display:grid;place-items:center}
+.hs .arr[hidden]{display:none}
+.card{border-top:3px solid var(--pr);padding-top:14px}
+.ns{color:var(--mute);font-size:14px;overflow-wrap:anywhere}
+.name{font-size:clamp(22px,4vw,32px);line-height:1.15;font-weight:600;overflow-wrap:anywhere;margin:2px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 18px;margin:10px 0}
+.stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.stat span{font-size:13px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{font-family:ui-monospace,Menlo,monospace;font-size:13px;padding:4px 8px;border-radius:6px;background:var(--prs);overflow-wrap:anywhere}
+.flag{background:transparent;border:1px solid var(--car);color:var(--car);font-family:inherit}
+.strip{display:flex;height:64px;border-radius:6px;overflow:hidden;margin:16px 0 4px;background:var(--panel)}
+.seg{border:0;border-right:1px solid var(--bg);padding:0;cursor:pointer;background:var(--pr);opacity:var(--o,1);flex:none;min-width:2px}
+.seg.rest{background:var(--mute);cursor:default}
+.legend{font-size:13px;color:var(--mute)}
+.list{border-top:1px solid var(--rule)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:10px 4px;border-bottom:1px solid var(--rule);cursor:pointer;min-height:44px}
+.row:hover{background:var(--panel)}
+.row .t{font-weight:600;overflow-wrap:anywhere;grid-column:1;grid-row:1}.row .p{font-size:13px;color:var(--mute);overflow-wrap:anywhere;grid-column:1}
+.row .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:14px;grid-column:2;grid-row:1}
+.row .bar{grid-column:1/-1;height:4px;background:var(--prs);border-radius:2px}.row .bar i{display:block;height:100%;background:var(--pr);border-radius:2px}
+details{border-top:1px solid var(--rule);padding:6px 0}summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600}
+.more{margin:10px 0}
+.empty{padding:16px;background:var(--panel);border-radius:8px}
+#tip{position:fixed;z-index:1000;max-width:min(320px,calc(100vw - 16px));padding:6px 10px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;pointer-events:none;opacity:0;transition:opacity .12s}
+#tip.on{opacity:1}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="band">
+  <h1>Where the proof of <code style="font-size:.8em">allChi</code> spends its 17 million lines</h1>
+  <p>Each module sits under the nearest module that every import route to it passes through, so a branch holds what only that branch needs. <a href="#how">How to read this page</a></p>
+  <label for="q" class="small mute">Find a module by any part of its name</label>
+  <input id="q" type="search" placeholder="for example RecTExists" autocomplete="off">
+  <div id="res"></div>
+</header>
+<main class="band" style="padding-top:0">
+  <nav class="hs" id="crumbs" aria-label="Dominator chain from the root">
+    <button class="arr" data-dir="-1" data-tip="Scroll the chain left" hidden><svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+    <div class="track"></div>
+    <button class="arr" data-dir="1" data-tip="Scroll the chain right" hidden><svg width="18" height="18" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+  </nav>
+  <section id="node" class="card"><p class="mute">Loading the tree…</p></section>
+</main>
+<footer class="band" id="how">
+  <h2>How to read this page</h2>
+  <p>The submission proves the Riemann Hypothesis from <code>allChi</code>, which says that no Dirichlet L-function vanishes for Re s &gt; 1/2. The proof of <code>allChi</code> is the theorem <code>everyCharacter</code> in the module at the top of the tree, and <span id="tm">175,174</span> project modules lie below it.</p>
+  <p>The tree is the dominator tree of the import graph. A module B sits under a module A when every chain of imports from the top down to B passes through A. A branch therefore holds the modules that only its top module needs, and its size measures how much of the proof that module alone accounts for. A module that several branches reach by separate routes sits higher up, under their common dominator, and at the top level these shared modules make up most of the source.</p>
+  <p>The tree is built from import lines only. A module listed here may still go unused by the proof terms. Which declarations the proof really uses will follow from the declaration graph of the Comparator export.</p>
+  <p>Red markers name metaprogramming found by a text search of the module. The theorem and definition counts come from the same search.</p>
+</footer>
+<div id="tip" role="tooltip"></div>
+<script>
+{
+const $=s=>document.querySelector(s), fmt=n=>n.toLocaleString('en-US'), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let meta, names=[], chunks={}, cur=0;
+const PAGE=40;
+const FLAGTEXT={kexactB:'Uses kexactB, which assigns a term to the goal without the elaborator checking its type. The kernel is the only check.',
+  kcopy:'Uses kcopy, which rebuilds a term field by field and assigns it without the elaborator check. The kernel is the only check.',
+  run_tac:'Uses run_tac, a tactic block written in Lean’s metaprogramming language.',
+  addDecl:'Calls addDecl, which adds declarations directly. The kernel checks each one.'};
+
+async function getJSON(u){const r=await fetch(u);if(!r.ok)throw new Error(u+' '+r.status);return r.json()}
+async function rec(i){const c=Math.floor(i/meta.chunk);if(!chunks[c])chunks[c]=getJSON('data/chunk'+c+'.json');return (await chunks[c])[i-c*meta.chunk]}
+function split(n){const k=n.lastIndexOf('.');return [n.slice(0,k),n.slice(k+1)]}
+function pct(a,b){const v=100*a/b;return (v>0&&v<0.1?'under 0.1':v.toFixed(1))+'\u00a0%'}
+const brk=s=>esc(s).replace(/([a-z0-9])([A-Z])/g,'$1<wbr>$2').replace(/\./g,'.<wbr>')
+function share(a,b){return b?Math.max(.4,100*a/b):0}
+
+async function children(i,r,from,count){const out=[];let j=i+1,end=i+r[1],idx=0;
+  while(j<end&&out.length<count){const c=await rec(j);if(idx>=from)out.push([j,c]);idx++;j+=c[1]}
+  return {list:out,more:j<end}}
+
+function row(id,r,total,prefix){const [ns,last]=split(names[id]);const p=prefix&&ns.startsWith(prefix)?ns.slice(prefix.length).replace(/^\./,''):ns;
+  return `<div class="row" tabindex="0" role="link" data-go="${id}" data-tip="Open ${esc(last)}"><span class="t">${brk(last)}</span><span class="n">${fmt(r[3])} lines · ${fmt(r[1])} mod.</span><span class="p">${p?brk(p):'same namespace'}</span><span class="bar"><i style="width:${share(r[3],total)}%"></i></span></div>`}
+
+async function crumbs(i){const chain=[];let j=i;while(j>=0){chain.unshift(j);j=(await rec(j))[0]}
+  const t=$('#crumbs .track');t.innerHTML=chain.map(k=>`<button data-go="${k}" aria-current="${k===i}" data-tip="${k===i?'The module shown below':'Go back to '+esc(split(names[k])[1])}">${esc(split(names[k])[1])}</button>`).join('');
+  hs.refresh()}
+
+async function show(i){cur=i;const r=await rec(i);const [ns,last]=split(names[i]);
+  const kids=await children(i,r,0,PAGE);const flags=meta.flags.filter((f,b)=>r[6]>>b&1);
+  const top=kids.list.slice(0,14), shown=top.reduce((s,[,c])=>s+c[3],0);
+  const strip=r[1]>1?`<div class="strip" role="group" aria-label="Branches by size">${top.map(([j,c],k)=>`<button class="seg" style="width:${100*c[3]/r[3]}%;--o:${1-k*0.05}" data-go="${j}" data-tip="${esc(split(names[j])[1])}, ${fmt(c[3])} lines, ${pct(c[3],r[3])} of this branch"></button>`).join('')}<span class="seg rest" style="flex:1" data-tip="The module itself and its smaller branches, ${fmt(r[3]-shown)} lines"></span></div>
+   <p class="legend">${top.length<kids.list.length||kids.more?'The '+top.length+' largest':'The'} branches below this module hold ${pct(shown,r[3])} of its ${fmt(r[3])} lines. The grey part, ${pct(r[3]-shown,r[3])}, is the module itself${kids.more||kids.list.length>top.length?' and its smaller branches':''}.${i===0?' At the top it consists mostly of shared modules, which several branches reach by separate routes.':''}</p>`:'';
+  const total=meta.lines;
+  $('#node').innerHTML=`<div class="ns">${brk(ns)}</div><div class="name">${brk(last)}</div>
+   ${strip}
+   <div class="stats">
+    <div class="stat"><b>${fmt(r[3])}</b><span>lines in this branch, ${(100*r[3]/total).toFixed(r[3]/total<.001?3:1)}\u00a0% of the whole</span></div>
+    <div class="stat"><b>${fmt(r[1])}</b><span>modules in this branch</span></div>
+    <div class="stat"><b>${fmt(r[2])}</b><span>lines in the module itself</span></div>
+    <div class="stat"><b>${fmt(r[4])} · ${fmt(r[5])}</b><span>theorems · definitions in the module</span></div>
+   </div>
+   ${flags.length?`<div class="chips">${flags.map(f=>`<span class="chip flag" tabindex="0" data-tip="${esc(FLAGTEXT[f])}">${f}</span>`).join('')}</div>`:''}
+   ${r[9].length?`<p class="small mute" style="margin:10px 0 0">Public declarations${r[4]+r[5]>r[9].length?', the first '+r[9].length:''}</p><div class="chips">${r[9].map(d=>`<span class="chip">${esc(d)}</span>`).join('')}</div>`:''}
+   <p class="small"><a href="${meta.repo}${names[i].split('.').join('/')}.lean" target="_blank" rel="noopener">Source on GitHub</a></p>
+   <h2>Branches below it</h2>
+   ${r[1]>1?`<div class="list" id="kids">${kids.list.map(([j,c])=>row(j,c,r[3],ns)).join('')}</div>${kids.more?`<button class="btn more" id="morekids" data-tip="Show the next ${PAGE} branches">Show more branches</button>`:''}`
+     :`<p class="empty">No module depends on this one alone. Every module it imports is also reached by another route, so they sit higher in the tree.</p>`}
+   <details id="imp"><summary>Imports, ${fmt(r[7].length)} project modules</summary><div class="list"></div></details>
+   <details id="ipb"><summary>Imported by ${fmt(r[8].length)} modules</summary><div class="list"></div></details>`;
+  let shownKids=kids.list.length;
+  const mk=$('#morekids'); if(mk) mk.onclick=async()=>{if(mk.ariaDisabled==='true')return;mk.ariaDisabled='true';const n=await children(i,r,shownKids,PAGE);shownKids+=n.list.length;
+    $('#kids').insertAdjacentHTML('beforeend',n.list.map(([j,c])=>row(j,c,r[3],ns)).join(''));if(n.more)mk.ariaDisabled='false';else mk.remove()};
+  for(const [sel,ids] of [['#imp',r[7]],['#ipb',r[8]]]){const d=$(sel);let n=0;
+    const fill=async()=>{const part=ids.slice(n,n+PAGE);n+=part.length;const rs=await Promise.all(part.map(rec));
+      d.querySelector('.list').insertAdjacentHTML('beforeend',part.map((j,k)=>row(j,rs[k],total,'')).join('')||'<p class="empty">None.</p>');
+      d.querySelector('.more')?.remove();if(n<ids.length)d.insertAdjacentHTML('beforeend',`<button class="btn more" data-tip="Show the next ${PAGE} modules">Show more</button>`)};
+    d.addEventListener('toggle',()=>{if(d.open&&!n)fill()});d.addEventListener('click',e=>{const b=e.target.closest('.more');if(b&&b.ariaDisabled!=='true'){b.ariaDisabled='true';fill()}})}
+  await crumbs(i);
+  if(location.hash!=='#m'+i)history.replaceState(null,'','#m'+i)}
+
+function go(i){if(i===cur)return;location.hash='m'+i}
+addEventListener('hashchange',()=>{const m=/^#m(\d+)$/.exec(location.hash);if(m)show(+m[1]).then(()=>scrollTo({top:$('#crumbs').offsetTop-8}))});
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){go(+g.dataset.go)}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const g=e.target.closest('.row[data-go]');if(g)go(+g.dataset.go)}});
+
+/* Search */
+let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(async()=>{const q=e.target.value.trim().toLowerCase();const box=$('#res');
+  if(q.length<3){box.innerHTML=q?'<p class="small mute">Type at least three characters.</p>':'';return}
+  const hits=[];for(let i=0;i<names.length&&hits.length<30;i++)if(names[i].toLowerCase().includes(q))hits.push(i);
+  if(!hits.length){box.innerHTML='<p class="empty">No module name contains that text. Try a shorter part, such as one word of the name.</p>';return}
+  const rs=await Promise.all(hits.map(rec));box.innerHTML=`<p class="small mute" style="margin-top:8px">${hits.length===30?'The first 30 matches':hits.length+' matches'}</p><div class="list">${hits.map((j,k)=>row(j,rs[k],meta.lines,'')).join('')}</div>`},180)});
+
+/* Horizontal scroller with edge arrows */
+const hs=(()=>{const nav=$('#crumbs'),t=nav.querySelector('.track'),[l,r]=nav.querySelectorAll('.arr');
+  const upd=()=>{l.hidden=t.scrollLeft<=2;r.hidden=t.scrollLeft+t.clientWidth>=t.scrollWidth-2};
+  t.addEventListener('scroll',upd,{passive:true});new ResizeObserver(upd).observe(t);
+  for(const b of [l,r])b.onclick=()=>t.scrollBy({left:+b.dataset.dir*t.clientWidth*.7});
+  return {refresh(){const s=t.querySelector('[aria-current=true]');if(s)t.scrollLeft=s.offsetLeft+s.offsetWidth-t.clientWidth+8;upd()}}})();
+
+/* Tooltip: mouse, keyboard focus and long press */
+const tip=$('#tip');let tipEl=null,press;
+function place(el){const txt=el.dataset.tip;if(!txt)return;tip.textContent=txt;tip.classList.add('on');tipEl=el;
+  const b=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;let x=b.left+b.width/2-w/2,y=b.top-h-8;
+  x=Math.max(8,Math.min(x,innerWidth-w-8));if(y<8)y=b.bottom+8;tip.style.left=x+'px';tip.style.top=y+'px'}
+function hide(){tip.classList.remove('on');tipEl=null}
+document.addEventListener('pointerover',e=>{if(e.pointerType==='touch')return;const el=e.target.closest('[data-tip]');if(el&&el!==tipEl)place(el);else if(!el)hide()});
+document.addEventListener('focusin',e=>{const el=e.target.closest('[data-tip]');el?place(el):hide()});
+document.addEventListener('focusout',hide);addEventListener('scroll',hide,{passive:true});
+document.addEventListener('touchstart',e=>{const el=e.target.closest('[data-tip]');clearTimeout(press);if(el)press=setTimeout(()=>place(el),450)},{passive:true});
+document.addEventListener('touchend',()=>{clearTimeout(press);setTimeout(hide,1600)},{passive:true});
+
+(async()=>{try{meta=await getJSON('data/meta.json');$('#tm').textContent=fmt(meta.modules);
+  const coded=await getJSON('data/names.json');let prev='';names=coded.map(([k,s])=>prev=prev.slice(0,k)+s);
+  const m=/^#m(\d+)$/.exec(location.hash);await show(m?+m[1]:0)}
+  catch(err){$('#node').innerHTML='<p class="empty">The tree data did not load. Reload the page, and if it fails again, the data files are missing next to the page.</p>'}})();
+}
+</script>
+</body>
+</html>
