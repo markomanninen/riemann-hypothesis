@@ -2,10 +2,21 @@ name: checks
 
 # Two fast checks. Neither compiles the submission's own code; the Comparator run does that
 # and is too big for hosted runners (see the README).
+#
+# This workflow runs on GitHub because other people need to see its results. The badge and the
+# challenge-export artifact are what checkers of the submission download and compare. It runs only
+# when a file it checks changes, so a change to the notes in verification/ starts nothing.
 
 on:
   push:
-  pull_request:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - "lake-manifest.json"
+      - "export-targets.txt"
+      - ".github/workflows/checks.yml"
   workflow_dispatch:
 
 permissions:
