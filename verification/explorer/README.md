@@ -21,6 +21,11 @@ The branches view walks the dominator tree of the import graph. A module sits un
 module that every chain of imports from the root to it passes through, so a branch holds the
 modules that only its top module needs.
 
+The landscape also plays tours. A tour is a camera run described in a file under `tours/`, such
+as a run down the longest chain of imports, seen from outside or from the chain itself. The
+Follow chain button plays one in the page, and `record_tour.py` renders one into an MP4 clip for
+a video. [ANIMATIONS.md](ANIMATIONS.md) tells how to write a tour and how to record it.
+
 Both views are built from import lines, as in [`../import-graph`](../import-graph/README.md).
 They are the module-level prototype. The declaration graph from the Comparator export will
 replace the modules with the declarations the proof terms really use.
@@ -31,7 +36,7 @@ replace the modules with the declarations the proof terms really use.
 python3 -I verification/import-graph/build.py        # if the import graph is missing
 python3 -I verification/explorer/build_data.py       # about two minutes, 0.6 GB of memory
 python3 -I verification/explorer/build_mountain.py   # about half a minute
-python3 -I verification/explorer/build_statements.py # about ten seconds on eight cores
+python3 -I verification/explorer/build_statements.py # about ten seconds on an Apple M4 Pro
 cd verification/explorer && python3 -I -m http.server 8811 --bind 127.0.0.1
 ```
 
@@ -41,7 +46,7 @@ the map and writes the positions, heights and import lists as gzip in base64 tex
 the name index the same way, 2.3 MB. `build_statements.py` reads every source file and writes
 the statements of 500 modules per file, 351 files and 93 MB in all, packed the same way. The page
 draws the landscape with WebGL in `mountain.js` and loads a tree chunk or a statement file only
-when it shows a module from it.
+when it shows a module from it. `tour.js` plays the tours.
 
 `build_statements.py` works on the text and does not run Lean. It ends a theorem's statement at
 the first `:=` outside brackets and splits it at the first colon outside brackets, so a rare

@@ -39,13 +39,19 @@ input[type=search]{width:100%;min-height:44px;padding:0 12px;font-size:16px;bord
 .hs .arr{flex:none;width:44px;height:44px;border:0;background:var(--bg);cursor:pointer;display:grid;place-items:center}
 .plate{position:relative;height:min(62vh,640px,104vw);min-height:320px;background:#1a1a19;border-radius:8px;overflow:hidden}
 .plate canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
-#labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.lbl{position:absolute;left:0;top:0;font-size:13px;line-height:1;color:#dfe5f0;white-space:nowrap;text-shadow:0 0 3px #1a1a19,0 0 3px #1a1a19,0 1px 2px #1a1a19}
-.lbl.top{font-size:14px;font-weight:600;color:#fff}
+.plate #ov{pointer-events:none}
 .hud{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 16px);display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;line-height:1.2;color:#c3c2b7;pointer-events:none;background:rgba(26,26,25,.78);padding:5px 8px;border-radius:6px}
 .hud i{width:84px;height:8px;border-radius:4px;background:linear-gradient(90deg,#184f95,#2a78d6,#6da7ec,#cde2fb)}
 #plate-msg{position:absolute;inset:0;display:grid;place-items:center;color:#c3c2b7;text-align:center;padding:20px;margin:0;max-width:none}
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;align-items:center}
+.tourbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.tourbar input[type=range]{flex:1;min-width:150px;height:44px;margin:0;accent-color:var(--pr)}
+.tourbar span{font-variant-numeric:tabular-nums}
+/* A stage shows the plate alone at a fixed size, for recording a tour. */
+.stage body{overflow:hidden}
+.stage :is(header,footer,#tip,.controls,.tourbar,#hint,#sel,#tour-msg,.hud),.stage body>.band:not(main){display:none!important}
+.stage main{padding:0;margin:0;max-width:none}
+.stage .plate{position:fixed;left:0;top:0;width:var(--sw);height:var(--sh);min-height:0;border-radius:0}
 .segm{display:flex}.segm .btn:first-child{border-radius:8px 0 0 8px}.segm .btn:last-child{border-radius:0 8px 8px 0;border-left:0}
 .card{border-top:3px solid var(--pr);padding-top:12px;margin-top:14px}
 .ns{color:var(--mute);font-size:14px}
@@ -99,7 +105,7 @@ footer.band{padding-bottom:48px}
   <section id="view-mountain">
     <div class="plate">
       <canvas id="gl" role="img" aria-label="All modules as points, raised by the length of the import chain below them"></canvas>
-      <div id="labels"></div>
+      <canvas id="ov" aria-hidden="true"></canvas>
       <div class="hud" hidden><span>0</span><i></i><span id="hud-top">198</span><span>height, the longest import chain below a module</span></div>
       <p id="plate-msg">Loading 175,174 modules…</p>
     </div>
@@ -110,7 +116,16 @@ footer.band{padding-bottom:48px}
       </div>
       <button class="btn" id="b-chain" aria-pressed="false" data-tip="Draw one longest chain of imports, 199 modules from the summit to the ground">Longest chain</button>
       <button class="btn" id="b-reset" data-tip="Return the camera to its starting position">Reset view</button>
+      <button class="btn" id="b-tour" aria-pressed="false" data-tip="Play a camera run that follows the longest chain of imports from the summit down to the ground">Follow chain</button>
+      <button class="btn" id="b-pose" data-tip="Copy the camera position as a step for a tour file">Copy camera</button>
     </div>
+    <div class="tourbar" id="tourbar" hidden>
+      <button class="btn" id="t-play" data-tip="Pause the run or continue it">Pause</button>
+      <button class="btn" id="t-stop" data-tip="End the run and show all modules again">End run</button>
+      <input type="range" id="t-seek" min="0" max="1000" value="0" aria-label="Position in the run" data-tip="Drag to move to another moment of the run">
+      <span class="small mute" id="t-time"></span>
+    </div>
+    <p class="small mute" id="tour-msg" hidden></p>
     <p class="small mute" id="hint">Drag to turn the mountain or to move the map. Pinch or scroll to zoom, and tap twice to zoom in. Drag with two fingers, or with Shift held, to move the mountain.</p>
     <section id="sel" class="card"></section>
   </section>
@@ -122,7 +137,7 @@ footer.band{padding-bottom:48px}
 <footer class="band" id="how">
   <h2>How to read this page</h2>
   <p>The submission proves the Riemann Hypothesis from <code>allChi</code>, which says that no Dirichlet L-function vanishes for Re s &gt; 1/2. The proof of <code>allChi</code> is the theorem <code>everyCharacter</code> in the module Main Conclusion, and <span id="tm">175,174</span> project modules lie below it.</p>
-  <p>In the landscape, a module is a dot. Its size is its line count. The rings on the ground are the source folders, which the author named after areas of mathematics, and a folder's ring encloses its modules and subfolders. A module's height is the number of modules in the longest chain of imports below it, so a module that imports only Mathlib lies on the ground and Main Conclusion is the summit. The Longest chain button draws one such chain from the summit to the ground.</p>
+  <p>In the landscape, a module is a dot. Its size is its line count. The rings on the ground are the source folders, which the author named after areas of mathematics, and a folder's ring encloses its modules and subfolders. A module's height is the number of modules in the longest chain of imports below it, so a module that imports only Mathlib lies on the ground and Main Conclusion is the summit. The Longest chain button draws one such chain from the summit to the ground, and the Follow chain button plays a camera run down it.</p>
   <p>Selecting a module colours two sets. Orange marks every module it imports, directly or through other modules. Green marks every module that imports it in the same way. Selecting a ring shows that folder's modules alone.</p>
   <p>Under a selected module the page lists the module's statements. A statement is a declaration as the Lean source writes it, with the proof left out. For a theorem, the part marked given holds the objects and assumptions, and the part marked claim holds what the theorem says about them. A definition also shows what it is defined as. File variables are declared once in the file, and Lean adds to a statement those of them that the statement uses.</p>
   <p>The branches view is the dominator tree of the import graph. A module B sits under a module A when every chain of imports from the summit down to B passes through A. A branch therefore holds the modules that only its top module needs.</p>
@@ -130,13 +145,18 @@ footer.band{padding-bottom:48px}
 </footer>
 <div id="tip" role="tooltip"></div>
 <script src="mountain.js"></script>
+<script src="tour.js"></script>
 <script>
 {
 const $=s=>document.querySelector(s), fmt=n=>n.toLocaleString('en-US'), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function pct(a,b){const v=100*a/b;return (v>0&&v<0.1?'under 0.1':v.toFixed(1))+' %'}
 function share(a,b){return b?Math.max(.4,100*a/b):0}
 function split(n){const k=n.lastIndexOf('.');return [n.slice(0,k),n.slice(k+1)]}
-const M=window.Mountain, PAGE=40;
+const M=window.Mountain, T=window.Tour, PAGE=40;
+/* ?stage=1920x1080 shows the plate alone at that size in pixels, drawn at ?scale= pixels per unit of layout. */
+const Q=new URLSearchParams(location.search), SIZE=/^(\d+)x(\d+)$/.exec(Q.get('stage')||''), SCALE=+Q.get('scale')||2;
+const STAGE=SIZE?{w:SIZE[1]/SCALE,h:SIZE[2]/SCALE,scale:SCALE}:null;
+if(STAGE){const r=document.documentElement;r.classList.add('stage');r.style.setProperty('--sw',STAGE.w+'px');r.style.setProperty('--sh',STAGE.h+'px')}
 /* Names are shown as words. wd writes one name, trail writes a dotted path as a trail of names. */
 const words=M.words, wd=s=>esc(words(s)), trail=s=>s.split('.').map(wd).join(' › ');
 let meta, names=[], chunks={}, cur=0, tab='mountain', treeShown=false;
@@ -204,7 +224,7 @@ addEventListener('hashchange',route);
 function go(i){if(tab==='mountain'){M.selectModule(i,true);$('.plate').scrollIntoView({block:'nearest'})}else location.hash='m'+i}
 
 /* Landscape */
-const mountainReady=M.init({canvas:$('#gl'),labels:$('#labels'),onSelect:renderSel,onHover:hover}).then(()=>{
+const mountainReady=M.init({canvas:$('#gl'),overlay:$('#ov'),stage:STAGE,onSelect:renderSel,onHover:hover}).then(()=>{
   $('#plate-msg').hidden=true;$('.hud').hidden=false;$('#hud-top').textContent=M.meta.top;renderSel(null)});
 mountainReady.catch(err=>{
   $('#plate-msg').textContent=err.message==='nowebgl'||err.message==='nogzip'
@@ -252,6 +272,43 @@ async function renderSel(s){const el=$('#sel');
     namesReady.then(()=>{const n=$('#selname');if(n&&M.sel===s)n.innerHTML=wd(split(names[s.id])[1])});
   }
   $('#a-clear').onclick=()=>M.clear();scroller($('#path'),buttons)}
+
+/* Tours: camera runs described in a tour file. ANIMATIONS.md tells how to write and record one. */
+const look={
+  module(name){let i=names.indexOf(name);
+    if(i<0){const hits=[];for(let k=0;k<names.length&&hits.length<2;k++)if(names[k].endsWith('.'+name))hits.push(k);if(hits.length===1)i=hits[0]}
+    if(i<0)throw new Error('no single module is named '+name);return i},
+  area(name){const exact=M.areas.findIndex(a=>a.name===name);if(exact>=0)return exact;
+    const hits=M.areas.map((a,i)=>a.name.endsWith('.'+name)?i:-1).filter(i=>i>=0);
+    if(hits.length!==1)throw new Error('no single folder is named '+name);return hits[0]},
+  caption(id,k,n){const [ns,last]=split(names[id]);return {title:words(last),text:ns.split('.').map(words).join(' › ')+(n?' · module '+k+' of '+n:'')}}};
+async function loadTour(url){await Promise.all([mountainReady,namesReady]);const tour=await getJSON(url);M.clear();T.load(tour,look);return tour}
+const clockText=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+function tourMsg(html){const el=$('#tour-msg');el.hidden=!html;el.innerHTML=html||''}
+T.onTick=()=>{const on=!!T.tour;$('#tourbar').hidden=!on;$('#b-tour').ariaPressed=String(on);if(!on)return;
+  $('#t-play').textContent=T.playing?'Pause':T.time>=T.duration?'Play again':'Play';
+  $('#t-seek').value=Math.round(1000*T.time/T.duration);$('#t-time').textContent=clockText(T.time)+' of '+clockText(T.duration)};
+$('#b-tour').onclick=async e=>{const b=e.currentTarget;if(b.ariaDisabled==='true')return;if(T.tour){T.stop();return}
+  b.ariaDisabled='true';tourMsg('');
+  try{await loadTour(Q.get('tour')||'tours/longest-chain.json');T.play()}catch(err){tourMsg('The run did not start. '+esc(err.message)+'.')}
+  b.ariaDisabled='false'};
+$('#t-play').onclick=()=>T.playing?T.pause():T.play();
+$('#t-stop').onclick=()=>T.stop();
+$('#t-seek').oninput=e=>{T.pause();T.seek(T.duration*e.target.value/1000);T.onTick()};
+M.onGrab=()=>{if(T.playing)T.pause()};
+$('#b-pose').onclick=async e=>{const b=e.currentTarget,p=M.getPose(),step=JSON.stringify({pose:Object.fromEntries(Object.entries(p).map(([k,v])=>[k,+v.toFixed(4)])),move:2,hold:1});
+  let copied=true;try{await navigator.clipboard.writeText(step)}catch(err){copied=false}
+  tourMsg((copied?'Copied this step for a tour file. ':'Copy this step into a tour file by hand. ')+'<code>'+esc(step)+'</code>');
+  b.textContent=copied?'Copied':'Shown below';setTimeout(()=>{b.textContent='Copy camera'},1600)};
+/* On a stage the tour named in ?tour= plays by itself, and with ?record it goes to the recorder frame by frame. */
+async function stage(){const post=(path,body)=>fetch('/'+path,{method:'POST',body}).then(r=>{if(!r.ok)throw new Error('the recorder answered '+r.status+' to '+path)});
+  try{await Promise.all([mountainReady,namesReady]);
+    if(document.fonts)await Promise.all(['13px Literata','600 14px Literata','600 22px Literata'].map(f=>document.fonts.load(f).catch(()=>{})));
+    if(!Q.get('tour'))return;await loadTour(Q.get('tour'));
+    if(Q.has('record'))await T.record(+Q.get('fps')||30,+Q.get('from')||0,Q.has('to')?+Q.get('to'):undefined,post);else T.play()}
+  catch(err){const text=err.message==='nowebgl'?'this browser has no WebGL':err.message;
+    $('#plate-msg').hidden=false;$('#plate-msg').style.display='grid';$('#plate-msg').textContent='The tour did not run. '+text+'.';
+    if(Q.has('record'))fetch('/fail',{method:'POST',body:text}).catch(()=>{})}}
 
 /* Branches */
 async function children(i,r,from,count){const out=[];let j=i+1,end=i+r[1],idx=0;
@@ -323,7 +380,7 @@ document.addEventListener('focusout',hide);addEventListener('scroll',hide,{passi
 document.addEventListener('touchstart',e=>{const el=e.target.closest('[data-tip]');clearTimeout(press);if(el)press=setTimeout(()=>place(el),450)},{passive:true});
 document.addEventListener('touchend',()=>{clearTimeout(press);setTimeout(hide,1600)},{passive:true});
 
-drawTabs();route().catch(()=>{$('#node').innerHTML='<p class="empty">The tree data did not load. Reload the page, and if it fails again, the data files are missing next to the page.</p>'});
+drawTabs();if(STAGE)stage();else route().catch(()=>{$('#node').innerHTML='<p class="empty">The tree data did not load. Reload the page, and if it fails again, the data files are missing next to the page.</p>'});
 }
 </script>
 </body>
