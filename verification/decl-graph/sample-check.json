@@ -1,0 +1,54 @@
+{
+ "root_module": "Development.WeilBound.CoreStatements.PluriharmonicCharts.XCSqsys",
+ "sample_modules": 2681,
+ "source_declarations": 23043,
+ "exact_closure": 2420,
+ "exact_edges": 120983,
+ "edges_found_by": {
+  "names": 88851,
+  "missed": 24697,
+  "fields": 5472,
+  "loose": 112,
+  "automation": 1851
+ },
+ "text_name_edges": 91472,
+ "text_name_edges_real": 88851,
+ "closures": {
+  "names": {
+   "text": 2359,
+   "exact": 2420,
+   "exact_missing_from_text": 141,
+   "text_beyond_exact": 80
+  },
+  "names+automation": {
+   "text": 4878,
+   "exact": 2420,
+   "exact_missing_from_text": 138,
+   "text_beyond_exact": 2596
+  },
+  "fields": {
+   "text": 3124,
+   "exact": 2420,
+   "exact_missing_from_text": 5,
+   "text_beyond_exact": 709
+  },
+  "fields+automation": {
+   "text": 5881,
+   "exact": 2420,
+   "exact_missing_from_text": 2,
+   "text_beyond_exact": 3463
+  },
+  "loose": {
+   "text": 3936,
+   "exact": 2420,
+   "exact_missing_from_text": 5,
+   "text_beyond_exact": 1521
+  },
+  "loose+automation": {
+   "text": 6287,
+   "exact": 2420,
+   "exact_missing_from_text": 2,
+   "text_beyond_exact": 3869
+  }
+ }
+}
