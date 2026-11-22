@@ -70,6 +70,14 @@ input[type=search]{width:100%;min-height:44px;padding:0 12px;font-size:16px;bord
 .row .bar{grid-column:1/-1;height:4px;background:var(--prs);border-radius:2px}.row .bar i{display:block;height:100%;background:var(--pr);border-radius:2px}
 details{border-top:1px solid var(--rule);padding:6px 0}summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600}
 .more{margin:10px 0}
+.st{border-top:1px solid var(--rule);padding:12px 0}
+.st-h{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}
+.st-k{font-size:13px;color:var(--mute)}
+.st-n{font-family:ui-monospace,Menlo,monospace;font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.st-l{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--mute);margin:8px 0 2px}
+.st pre{margin:0;font:13px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--mute)}
+.st pre.main{color:var(--ink);background:var(--prs);padding:8px 10px;border-radius:6px}
+.st .cut{margin:4px 0 0}
 .empty{padding:16px;background:var(--panel);border-radius:8px;max-width:none}
 footer.band{padding-bottom:48px}
 #tip{position:fixed;z-index:1000;max-width:min(320px,calc(100vw - 16px));padding:6px 10px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;pointer-events:none;opacity:0;transition:opacity .12s}
@@ -116,8 +124,9 @@ footer.band{padding-bottom:48px}
   <p>The submission proves the Riemann Hypothesis from <code>allChi</code>, which says that no Dirichlet L-function vanishes for Re s &gt; 1/2. The proof of <code>allChi</code> is the theorem <code>everyCharacter</code> in the module Main Conclusion, and <span id="tm">175,174</span> project modules lie below it.</p>
   <p>In the landscape, a module is a dot. Its size is its line count. The rings on the ground are the source folders, which the author named after areas of mathematics, and a folder's ring encloses its modules and subfolders. A module's height is the number of modules in the longest chain of imports below it, so a module that imports only Mathlib lies on the ground and Main Conclusion is the summit. The Longest chain button draws one such chain from the summit to the ground.</p>
   <p>Selecting a module colours two sets. Orange marks every module it imports, directly or through other modules. Green marks every module that imports it in the same way. Selecting a ring shows that folder's modules alone.</p>
+  <p>Under a selected module the page lists the module's statements. A statement is a declaration as the Lean source writes it, with the proof left out. For a theorem, the part marked given holds the objects and assumptions, and the part marked claim holds what the theorem says about them. A definition also shows what it is defined as. File variables are declared once in the file, and Lean adds to a statement those of them that the statement uses.</p>
   <p>The branches view is the dominator tree of the import graph. A module B sits under a module A when every chain of imports from the summit down to B passes through A. A branch therefore holds the modules that only its top module needs.</p>
-  <p>Everything here is built from import lines and a text search of the sources. A module shown here may still go unused by the proof terms. Which declarations the proof really uses will follow from the declaration graph of the Comparator export.</p>
+  <p>Everything here is built from import lines and a text search of the sources. The search splits a statement at the first colon and the first <code>:=</code> outside brackets, so a rare layout can place the split wrongly, and the source link shows the original. A module shown here may still go unused by the proof terms. Which declarations the proof really uses will follow from the declaration graph of the Comparator export.</p>
 </footer>
 <div id="tip" role="tooltip"></div>
 <script src="mountain.js"></script>
@@ -142,6 +151,32 @@ const namesReady=(async()=>{let coded;
   try{coded=JSON.parse(new TextDecoder().decode(await M.gunzip('data/names.gz.txt')))}catch(e){coded=await getJSON('data/names.json')}
   let prev='';names=coded.map(([k,s])=>prev=prev.slice(0,k)+s)})();
 async function rec(i){await metaReady;const c=Math.floor(i/meta.chunk);if(!chunks[c])chunks[c]=getJSON('data/chunk'+c+'.json');return (await chunks[c])[i-c*meta.chunk]}
+
+/* Statements: what each declaration of a module says, as the Lean source writes it and without the
+   proof. Both views list them with showStatements. */
+const STPAGE=12, stCache=new Map(), stReady=getJSON('data/statements.json').catch(()=>null);
+async function stmts(i){const sm=await stReady;if(!sm)return undefined;const c=Math.floor(i/sm.chunk);
+  if(!stCache.has(c)){stCache.set(c,M.gunzip('data/stmt'+c+'.gz.txt').then(b=>JSON.parse(new TextDecoder().decode(b))).catch(e=>{stCache.delete(c);throw e}));
+    if(stCache.size>6)stCache.delete(stCache.keys().next().value)}
+  return (await stCache.get(c))[i-c*sm.chunk]}
+const STLABEL={theorem:['claim',''],lemma:['claim',''],axiom:['claim',''],instance:['provides',''],def:['type','defined as'],abbrev:['type','defined as'],
+  opaque:['type',''],structure:['type','fields'],class:['type','fields'],inductive:['type','constructors']};
+function stCard(d,ctxs,prevCtx){const kind=d[0],[lc,lv]=STLABEL[kind.slice(kind.lastIndexOf(' ')+1)]||['type','value'],main=d[5]?5:4;
+  const part=(label,j,cut)=>d[j]?`<div class="st-l">${label}</div><pre${j===main?' class="main"':''}>${esc(d[j])}${cut?' …':''}</pre>${cut?`<p class="small mute cut">The source continues for ${fmt(cut)} more characters.</p>`:''}`:'';
+  return `<div class="st"><div class="st-h"><span class="st-k">${esc(kind)}</span><span class="st-n">${esc(d[1]||'unnamed')}</span></div>
+   ${d[2]&&d[2]!==prevCtx?`<div class="st-l">file variables</div><pre>${esc(ctxs[d[2]-1])}</pre>`:''}${part('given',3,d[6])}${part(lc,4,d[7])}${part(lv,5,d[8])}</div>`}
+async function showStatements(el,i,head){el.dataset.for=i;el.innerHTML=head+'<p class="small mute">Loading the statements…</p>';
+  await Promise.all([metaReady,namesReady]);let s;try{s=await stmts(i)}catch(e){s=undefined}
+  if(el.dataset.for!==String(i)||!el.isConnected)return;
+  const src=head?`<p class="small"><a href="${meta.repo}${names[i].split('.').join('/')}.lean" target="_blank" rel="noopener">Source on GitHub</a></p>`:'';
+  if(s===undefined){el.innerHTML=head+'<p class="empty">The statements did not load. Reload the page, or read them in the source.</p>'+src;return}
+  if(!s){el.innerHTML=head+'<p class="empty">This module has no theorem or definition of its own. The Branches tab lists the modules it imports.</p>'+src;return}
+  const [ctxs,ds]=s;let shown=0;
+  el.innerHTML=`${head}<p class="small mute">${ds.length===1?'The module has one declaration, shown':'The module has '+fmt(ds.length)+' declarations, each shown'} as the Lean source writes it, without the proof.</p><div class="st-list"></div>${src}`;
+  const list=el.querySelector('.st-list');
+  const more=()=>{const part=ds.slice(shown,shown+STPAGE);list.insertAdjacentHTML('beforeend',part.map((d,k)=>stCard(d,ctxs,shown+k?ds[shown+k-1][2]:0)).join(''));shown+=part.length;
+    el.querySelector('.more')?.remove();if(shown<ds.length)list.insertAdjacentHTML('afterend',`<button class="btn more" data-tip="Show the next ${Math.min(STPAGE,ds.length-shown)} statements of this module">Show more statements</button>`)};
+  more();el.onclick=e=>{if(e.target.closest('.more'))more()}}
 
 /* One horizontal scroller for tabs, chains and paths. It keeps the current item in view and
    shows an arrow at an edge only while more items lie that way. */
@@ -183,7 +218,7 @@ function hover(i,x,y){if(i===undefined||i<0){if(tipEl===canvasTip)hide();return}
   const info=M.moduleInfo(i),nm=names.length?words(split(names[i])[1])+', ':'';
   showAt(nm+'height '+info.height+', '+fmt(info.lines)+' lines',x,y-14)}
 async function renderSel(s){const el=$('#sel');
-  if(!s){el.innerHTML='<p class="empty">Tap a dot to select a module, or a ring to select a folder. A selected module lights up what it rests on in orange and what is built on it in green.</p>';if(tab==='mountain'&&M.ready)setHash('mountain');return}
+  if(!s){el.innerHTML='<p class="empty">Tap a dot to select a module, or a ring to select a folder. A selected module lights up what it rests on in orange and what is built on it in green, and its statements are listed here.</p>';if(tab==='mountain'&&M.ready)setHash('mountain');return}
   const chain=M.areaChain(s.type==='area'?s.id:s.area), total=M.meta.lines;
   const buttons=chain.map(a=>`<button data-area="${a}" aria-current="${s.type==='area'&&a===s.id}" data-tip="Select the folder ${esc(M.areas[a].label)}">${esc(M.areas[a].label)}</button>`).join('');
   if(s.type==='area'){
@@ -210,8 +245,10 @@ async function renderSel(s){const el=$('#sel');
      <p class="legend">The lines from the module run to the ${fmt(s.imports)} modules it imports directly and to ${s.importers>400?'400 of the ':'the '}${fmt(s.importers)} that import it.</p>
      <div class="acts"><button class="btn" id="a-fly" data-tip="Move the camera to this module">Fly to module</button>
       <button class="btn" id="a-tree" data-tip="Open this module in the Branches tab, with its declarations and import lists">Open in branches</button>
-      <button class="btn" id="a-clear" data-tip="Remove the selection and show all modules again">Clear selection</button></div>`;
+      <button class="btn" id="a-clear" data-tip="Remove the selection and show all modules again">Clear selection</button></div>
+     <section id="st-land"></section>`;
     $('#a-fly').onclick=()=>M.flyToModule(s.id);$('#a-tree').onclick=()=>{location.hash='m'+s.id};setHash('v'+s.id);
+    showStatements($('#st-land'),s.id,'<h2>Statements</h2>');
     namesReady.then(()=>{const n=$('#selname');if(n&&M.sel===s)n.innerHTML=wd(split(names[s.id])[1])});
   }
   $('#a-clear').onclick=()=>M.clear();scroller($('#path'),buttons)}
@@ -241,12 +278,14 @@ async function showTree(i){await Promise.all([metaReady,namesReady]);cur=i;treeS
    ${r[9].length?`<p class="small mute" style="margin:10px 0 0">Public declarations${r[4]+r[5]>r[9].length?', the first '+r[9].length:''}</p><div class="chips">${r[9].map(d=>`<span class="chip">${esc(d)}</span>`).join('')}</div>`:''}
    <div class="acts"><button class="btn" id="t-mtn" data-tip="Show this module on the mountain with what it rests on lit up">Show in landscape</button></div>
    <p class="small"><a href="${meta.repo}${names[i].split('.').join('/')}.lean" target="_blank" rel="noopener">Source on GitHub</a></p>
+   <details id="stm"><summary>Statements of this module</summary><section></section></details>
    <h2>Branches below it</h2>
    ${r[1]>1?`<div class="list" id="kids">${kids.list.map(([j,c])=>row(j,c,r[3],ns)).join('')}</div>${kids.more?`<button class="btn more" id="morekids" data-tip="Show the next ${PAGE} branches">Show more branches</button>`:''}`
      :`<p class="empty">No module depends on this one alone. Every module it imports is also reached by another route, so they sit higher in the tree.</p>`}
    <details id="imp"><summary>Imports, ${fmt(r[7].length)} project modules</summary><div class="list"></div></details>
    <details id="ipb"><summary>Imported by ${fmt(r[8].length)} modules</summary><div class="list"></div></details>`;
   $('#t-mtn').onclick=()=>{location.hash='v'+i;scrollTo({top:0})};
+  $('#stm').addEventListener('toggle',e=>{const box=e.target.querySelector('section');if(e.target.open&&!box.dataset.for)showStatements(box,i,'')});
   let shownKids=kids.list.length;
   const mk=$('#morekids'); if(mk) mk.onclick=async()=>{if(mk.ariaDisabled==='true')return;mk.ariaDisabled='true';const n=await children(i,r,shownKids,PAGE);shownKids+=n.list.length;
     $('#kids').insertAdjacentHTML('beforeend',n.list.map(([j,c])=>row(j,c,r[3],ns)).join(''));if(n.more)mk.ariaDisabled='false';else mk.remove()};
