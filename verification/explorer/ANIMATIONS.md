@@ -240,6 +240,7 @@ A chain step moves a marker, called the head, along a chain of imports, from mod
 | `distance` | The distance of the camera from the chain when seen from outside, in the unit of the map. | `0.7` |
 | `smooth` | The camera follows the average place of the chain over this many modules either side of the head. A larger number gives a calmer camera. | `3`, and `0` on a ride |
 | `turn` | Degrees per second that the camera moves around the chain when seen from outside, anticlockwise seen from above. A negative number moves it clockwise. | `3` |
+| `ahead` | On a ride with `smooth` above zero, the camera faces from the place this many modules behind it to the place this many modules in front of it, both on the averaged chain. A larger number gives slower turns. | `0.5` |
 
 The fields `from` and `to` stand on the step itself and count places. Place 0 is the first module
 of the chain, which on the longest chain is the summit. Either field can stand alone. They differ
@@ -261,6 +262,13 @@ the landscape below fills the picture while the chain is high. The chain ahead i
 starts under the camera, with a small circle on each of the next three modules, and every module
 of the chain is orange. During the last third of a hop and the first third of the next one, the
 camera turns towards the new direction.
+
+A ride with `smooth` above zero is calmer. The camera travels along the average place of the
+chain over `smooth` modules either side of it, so it cuts the corners of the chain, and it faces
+along that averaged path as the field `ahead` describes. With `"smooth": 6, "ahead": 2.5` the
+camera turns by about 13 degrees a second on modules 99 to 129 of the longest chain. The chain
+ahead is still drawn through the modules themselves, so the line swings to both sides of the
+camera's path.
 
 Every hop takes the same time, whatever its length on the map. A chain that jumps from one
 folder to a distant one therefore crosses the map fast on that hop. On a ride, set `hop` to one
