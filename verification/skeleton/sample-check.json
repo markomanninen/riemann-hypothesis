@@ -1,0 +1,43 @@
+{
+ "root_module": "Development.WeilBound.CoreStatements.PluriharmonicCharts.XCSqsys",
+ "sample_modules": 2681,
+ "source_declarations": 23043,
+ "roots": 5,
+ "reached_compiled": 2420,
+ "reached_text": 2357,
+ "reached_both": 2279,
+ "same_immediate_dominator": 2171,
+ "text_dominator_really_dominates": 2199,
+ "chapters": {
+  "1%": {
+   "gathers_at_least": 24,
+   "compiled": 64,
+   "text": 64,
+   "in_both": 60,
+   "text_pairs": 8275,
+   "text_pairs_true": 7746,
+   "compiled_pairs": 8362,
+   "compiled_pairs_found": 7772,
+   "size_ratio_text_to_compiled": {
+    "lowest": 0.444,
+    "median": 0.992,
+    "highest": 1.2
+   }
+  },
+  "5%": {
+   "gathers_at_least": 121,
+   "compiled": 14,
+   "text": 11,
+   "in_both": 11,
+   "text_pairs": 5690,
+   "text_pairs_true": 5358,
+   "compiled_pairs": 5890,
+   "compiled_pairs_found": 5616,
+   "size_ratio_text_to_compiled": {
+    "lowest": 0.981,
+    "median": 1.053,
+    "highest": 1.176
+   }
+  }
+ }
+}

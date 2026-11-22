@@ -1,0 +1,269 @@
+{
+ "source": {
+  "declarations": 836456,
+  "reached": 760989,
+  "records_reached": 805424,
+  "edges": 4966775
+ },
+ "tree": {
+  "passes": 3,
+  "depth": 47
+ },
+ "gathering_at_least": {
+  "100000": 6,
+  "10000": 62,
+  "1000": 590,
+  "100": 5730
+ },
+ "skeleton": {
+  "min": 1000,
+  "nodes": 590,
+  "wrappers": 248,
+  "heads": 342,
+  "statements_found": 588,
+  "top": "LFunction_ne_zero_of_half_lt_re",
+  "top_gathers": 760227
+ },
+ "largest": [
+  {
+   "name": "UpperTheory.FinalTheorems.everyCharacter",
+   "gathers": 760225,
+   "own": 116470,
+   "share_of_reached": 0.999
+  },
+  {
+   "name": "UpperTheory.FinalTheorems.everyCharacter_of_row",
+   "gathers": 577248,
+   "own": 12939,
+   "share_of_reached": 0.7585
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin",
+   "gathers": 506214,
+   "own": 89709,
+   "share_of_reached": 0.6652
+  },
+  {
+   "name": "UpperTheory.Lit.every_character_of_theta_integrals_local_matching",
+   "gathers": 315443,
+   "own": 30658,
+   "share_of_reached": 0.4145
+  },
+  {
+   "name": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
+   "gathers": 266135,
+   "own": 113675,
+   "share_of_reached": 0.3497
+  },
+  {
+   "name": "GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt",
+   "gathers": 89671,
+   "own": 13419,
+   "share_of_reached": 0.1178
+  },
+  {
+   "name": "UpperTheory.One.Join.automorphic_window_of_inputs",
+   "gathers": 55752,
+   "own": 638,
+   "share_of_reached": 0.0733
+  },
+  {
+   "name": "UpperTheory.V.HV.DescentVanishingReductions.v_window_of_automorphy_csd_ss_mono_odd",
+   "gathers": 55052,
+   "own": 3631,
+   "share_of_reached": 0.0723
+  },
+  {
+   "name": "SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt",
+   "gathers": 52094,
+   "own": 9407,
+   "share_of_reached": 0.0685
+  },
+  {
+   "name": "UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter",
+   "gathers": 51784,
+   "own": 13,
+   "share_of_reached": 0.068
+  },
+  {
+   "name": "UpperTheory.Gal.Int.galoisRepresentations_of_thetaLift",
+   "gathers": 48992,
+   "own": 161,
+   "share_of_reached": 0.0644
+  },
+  {
+   "name": "UpperTheory.V.HV.DescentVanishingReductions.vwin_of_hypotheses_H_E_alt",
+   "gathers": 47836,
+   "own": 18310,
+   "share_of_reached": 0.0629
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.geoOne_holds",
+   "gathers": 43403,
+   "own": 134,
+   "share_of_reached": 0.057
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.geometric_realization_of_weight_one",
+   "gathers": 41443,
+   "own": 1342,
+   "share_of_reached": 0.0545
+  },
+  {
+   "name": "GlobalTheory.Fc.AllAtMemberStage0.allRows_of_open0_alt",
+   "gathers": 34967,
+   "own": 3746,
+   "share_of_reached": 0.0459
+  },
+  {
+   "name": "PositivityTheory.HtPt.Ah.deep_slim_use",
+   "gathers": 30169,
+   "own": 390,
+   "share_of_reached": 0.0396
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Plug.deepStR_of_use",
+   "gathers": 29778,
+   "own": 5780,
+   "share_of_reached": 0.0391
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.steps_holds",
+   "gathers": 26301,
+   "own": 15514,
+   "share_of_reached": 0.0346
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Top.goodTower_volume_of_reduced",
+   "gathers": 20433,
+   "own": 1661,
+   "share_of_reached": 0.0269
+  },
+  {
+   "name": "GlobalTheory.Fc.StageOneU.member_bundles_large_unramified_exponents_alt",
+   "gathers": 20057,
+   "own": 5666,
+   "share_of_reached": 0.0264
+  },
+  {
+   "name": "GlobalTheory.Fc.S0.ontoX_and_lamLow_of_unitaryGroupHypotheses'",
+   "gathers": 20036,
+   "own": 332,
+   "share_of_reached": 0.0263
+  },
+  {
+   "name": "GlobalTheory.BigOn.ontoX_of_hypotheses_alt_alt",
+   "gathers": 19703,
+   "own": 5379,
+   "share_of_reached": 0.0259
+  },
+  {
+   "name": "GlobalTheory.T.good_tower_volume_theorem",
+   "gathers": 17143,
+   "own": 6249,
+   "share_of_reached": 0.0225
+  },
+  {
+   "name": "UpperTheory.GalC.final_alt_alt",
+   "gathers": 15685,
+   "own": 753,
+   "share_of_reached": 0.0206
+  },
+  {
+   "name": "UpperTheory.GalC.final_of_alt",
+   "gathers": 14931,
+   "own": 592,
+   "share_of_reached": 0.0196
+  },
+  {
+   "name": "GlobalTheory.LocalRows.at_choice_alt",
+   "gathers": 14541,
+   "own": 607,
+   "share_of_reached": 0.0191
+  },
+  {
+   "name": "UpperTheory.GalC.linkN_of_twGood_galoisPreconditions",
+   "gathers": 14335,
+   "own": 677,
+   "share_of_reached": 0.0188
+  },
+  {
+   "name": "GlobalTheory.CarrierGap.offDiag",
+   "gathers": 13933,
+   "own": 1127,
+   "share_of_reached": 0.0183
+  },
+  {
+   "name": "GlobalTheory.Mem.Top.Bl.exists_baseLattice_of_prime_alt",
+   "gathers": 13160,
+   "own": 3326,
+   "share_of_reached": 0.0173
+  },
+  {
+   "name": "SelfIntersectionVolumeEstimates.topCovolG_alt_alt",
+   "gathers": 12517,
+   "own": 9320,
+   "share_of_reached": 0.0164
+  },
+  {
+   "name": "GlobalTheory.Fc.S0.Open0ProofU.open_orbit_of_unramified_exponents_alt",
+   "gathers": 12470,
+   "own": 492,
+   "share_of_reached": 0.0164
+  },
+  {
+   "name": "UpperTheory.Top.zero_free_all_of_green_v_win",
+   "gathers": 12024,
+   "own": 1067,
+   "share_of_reached": 0.0158
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.kodaira_spencer_of_weight_one",
+   "gathers": 11850,
+   "own": 5591,
+   "share_of_reached": 0.0156
+  },
+  {
+   "name": "GlobalTheory.Svd.servH_row_of_artin",
+   "gathers": 10790,
+   "own": 3808,
+   "share_of_reached": 0.0142
+  },
+  {
+   "name": "GlobalTheory.miStarRow_alt_alt",
+   "gathers": 10782,
+   "own": 222,
+   "share_of_reached": 0.0142
+  },
+  {
+   "name": "GlobalTheory.miStarRowClosing_alt_alt",
+   "gathers": 10558,
+   "own": 251,
+   "share_of_reached": 0.0139
+  },
+  {
+   "name": "GlobalTheory.Fam.miStar_row_alt_alt",
+   "gathers": 10305,
+   "own": 254,
+   "share_of_reached": 0.0135
+  },
+  {
+   "name": "GlobalTheory.Fam.miStar2_of_allTrue_alt_alt",
+   "gathers": 10046,
+   "own": 503,
+   "share_of_reached": 0.0132
+  },
+  {
+   "name": "GlobalTheory.NLinkClose.main_alt_alt",
+   "gathers": 9923,
+   "own": 1255,
+   "share_of_reached": 0.013
+  },
+  {
+   "name": "GlobalTheory.MiTop.famAllQ_of_allTrue_alt",
+   "gathers": 9541,
+   "own": 2695,
+   "share_of_reached": 0.0125
+  }
+ ]
+}
